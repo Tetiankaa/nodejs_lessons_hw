@@ -4,6 +4,7 @@ import { ApiError } from "../errors/api-error";
 import { ITokenPair } from "../interfaces/token.interface";
 import { tokenRepository } from "../repositories/token.repository";
 import { tokenService } from "../services/token.service";
+import { ETokenType } from "../enums/token-type.enum";
 
 class AuthMiddleware {
   public async checkAccessToken(
@@ -16,7 +17,7 @@ class AuthMiddleware {
       if (!access) {
         throw new ApiError(401, "No token provided");
       }
-      const payload = tokenService.verifyAccessToken(access);
+      const payload = tokenService.verifyToken(access, ETokenType.ACCESS);
       const tokenPair = await tokenRepository.findByParams({
         accessToken: access,
       });
@@ -40,7 +41,7 @@ class AuthMiddleware {
       if (!token) {
         throw new ApiError(401, "No token provided");
       }
-      tokenService.verifyRefreshToken(token.refreshToken);
+      tokenService.verifyToken(token.refreshToken, ETokenType.REFRESH);
 
       next();
     } catch (e) {

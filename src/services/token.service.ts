@@ -1,7 +1,7 @@
 import * as jsonwebtoken from "jsonwebtoken";
-import { JwtPayload } from "jsonwebtoken";
 
 import { config } from "../configs/config";
+import { ETokenType } from "../enums/token-type.enum";
 import { ApiError } from "../errors/api-error";
 import { IJwtPayload } from "../interfaces/jwt-payload.interface";
 import { ITokenResponse } from "../interfaces/token.interface";
@@ -23,23 +23,20 @@ class TokenService {
     };
   }
 
-  public verifyAccessToken(token: string): IJwtPayload {
+  public verifyToken(token: string, type: ETokenType): IJwtPayload {
     try {
-      return jsonwebtoken.verify(
-        token,
-        config.JWT_ACCESS_SECRET,
-      ) as IJwtPayload;
-    } catch (e) {
-      throw new ApiError(401, "Token is not valid");
-    }
-  }
-
-  public verifyRefreshToken(token: string): JwtPayload {
-    try {
-      return jsonwebtoken.verify(
-        token,
-        config.JWT_REFRESH_SECRET,
-      ) as IJwtPayload;
+      let secret: string;
+      switch (type) {
+        case ETokenType.ACCESS:
+          secret = config.JWT_ACCESS_SECRET;
+          break;
+        case ETokenType.REFRESH:
+          secret = config.JWT_REFRESH_SECRET;
+          break;
+        default:
+          throw new ApiError(401, "Invalid token type");
+      }
+      return jsonwebtoken.verify(token, secret) as IJwtPayload;
     } catch (e) {
       throw new ApiError(401, "Token is not valid");
     }
