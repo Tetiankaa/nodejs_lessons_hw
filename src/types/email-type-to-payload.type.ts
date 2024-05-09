@@ -11,7 +11,7 @@ export type EmailTypeToPayloadType = {
     EmailCombinedPayloadType,
     "frontUrl" | "actionToken"
   >;
-  [EEmailType.RESET_PASSWORD]: PickRequiredType<
+  [EEmailType.FORGOT_PASSWORD]: PickRequiredType<
     EmailCombinedPayloadType,
     "frontUrl" | "name" | "actionToken" | "email"
   >;

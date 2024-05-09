@@ -1,6 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 
 import { statusCode } from "../constants/status-code.constants";
+import { IForgot, ISetForgot } from "../interfaces/action-token.interface";
+import { IJwtPayload } from "../interfaces/jwt-payload.interface";
 import { AuthMapper } from "../mappers/auth.mapper";
 import { authService } from "../services/auth.service";
 
@@ -35,6 +37,41 @@ class AuthController {
       const token = await authService.refresh(req.body);
 
       res.status(statusCode.CREATED).json(token);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  public async forgotPassword(req: Request, res: Response, next: NextFunction) {
+    try {
+      const body = req.body as IForgot;
+      await authService.forgotPassword(body);
+      res.sendStatus(statusCode.NO_CONTENT);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  public async setForgotPassword(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const body = req.body as ISetForgot;
+      const { _id } = req.res.locals.actionTokenPayload as IJwtPayload;
+      await authService.setForgotPassword(body, _id);
+      res.sendStatus(statusCode.CREATED);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  public async verify(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { _id } = req.res.locals.actionTokenPayload as IJwtPayload;
+      await authService.verify(_id);
+      res.sendStatus(statusCode.NO_CONTENT);
     } catch (e) {
       next(e);
     }

@@ -3,21 +3,18 @@ import { Router } from "express";
 import { authController } from "../controllers/auth.controller";
 import { authMiddleware } from "../middlewares/auth.middleware";
 import { commonMiddleware } from "../middlewares/common.middleware";
-import {
-  createUserValidator,
-  loginUserValidator,
-} from "../validators/user.validator";
+import { UserValidator } from "../validators/user.validator";
 
 const router = Router();
 
 router.post(
   "/sign-up",
-  commonMiddleware.isBodyValid(createUserValidator),
+  commonMiddleware.isBodyValid(UserValidator.create),
   authController.signUp,
 );
 router.post(
   "/sign-in",
-  commonMiddleware.isBodyValid(loginUserValidator),
+  commonMiddleware.isBodyValid(UserValidator.login),
   authController.signIn,
 );
 router.post(
@@ -25,5 +22,17 @@ router.post(
   authMiddleware.checkRefreshToken,
   authController.refresh,
 );
+router.post(
+  "/forgot-password",
+  commonMiddleware.isBodyValid(UserValidator.forgotPassword),
+  authController.forgotPassword,
+);
+router.put(
+  "/forgot-password",
+  authMiddleware.checkActionToken,
+  commonMiddleware.isBodyValid(UserValidator.setForgotPassword),
+  authController.setForgotPassword,
+);
+router.put("/verify", authMiddleware.checkActionToken, authController.verify);
 
 export const authRouter = router;

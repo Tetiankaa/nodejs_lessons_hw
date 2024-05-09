@@ -37,11 +37,10 @@ class UserController {
     }
   }
 
-  public async deleteById(req: Request, res: Response, next: NextFunction) {
+  public async deleteMe(req: Request, res: Response, next: NextFunction) {
     try {
-      const { id } = req.params;
-      const accessToken = req.res.locals.accessToken;
-      await userService.deleteById(id, accessToken);
+      const { _id } = req.res.locals.jwtPayload;
+      await userService.deleteMe(_id);
       res.status(statusCode.NO_CONTENT).json("User was successfully deleted");
     } catch (e) {
       next(e);

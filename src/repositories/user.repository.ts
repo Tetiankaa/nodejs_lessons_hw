@@ -1,9 +1,10 @@
 import { IUser } from "../interfaces/user.interface";
 import { User } from "../models/user.models";
+import {FilterQuery} from "mongoose";
 
 class UserRepository {
   public async getAll(): Promise<IUser[]> {
-    return await User.find({});
+    return await User.find({ isDeleted: false });
   }
 
   public async getById(id: string): Promise<IUser> {
@@ -24,6 +25,9 @@ class UserRepository {
   }
   public async findByEmail(email: string): Promise<IUser> {
     return await User.findOne({ email });
+  }
+  public async findByParams(params: FilterQuery<IUser>): Promise<IUser> {
+    return await User.findOne(params);
   }
 }
 

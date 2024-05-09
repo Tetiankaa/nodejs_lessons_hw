@@ -2,6 +2,8 @@ import * as jsonwebtoken from "jsonwebtoken";
 
 import { config } from "../configs/config";
 import { ErrorMessages } from "../constants/error-messages.constants";
+import { statusCode } from "../constants/status-code.constants";
+import { ActionTokenTypeEnum } from "../enums/action-token-type.enum";
 import { ETokenType } from "../enums/token-type.enum";
 import { ApiError } from "../errors/api-error";
 import { IJwtPayload } from "../interfaces/jwt-payload.interface";
@@ -35,11 +37,67 @@ class TokenService {
           secret = config.JWT_REFRESH_SECRET;
           break;
         default:
-          throw new ApiError(401, ErrorMessages.INVALID_TOKEN_TYPE);
+          throw new ApiError(
+            statusCode.UNAUTHORIZED,
+            ErrorMessages.INVALID_TOKEN_TYPE,
+          );
       }
       return jsonwebtoken.verify(token, secret) as IJwtPayload;
     } catch (e) {
-      throw new ApiError(401, ErrorMessages.INVALID_TOKEN);
+      throw new ApiError(statusCode.UNAUTHORIZED, ErrorMessages.INVALID_TOKEN);
+    }
+  }
+  public generateActionToken(
+    payload: IJwtPayload,
+    type: ActionTokenTypeEnum,
+  ): string {
+    try {
+      let secret: string;
+      let expiresIn: string;
+
+      switch (type) {
+        case ActionTokenTypeEnum.FORGOT:
+          secret = config.JWT_ACTION_FORGOT_PASSWORD_SECRET;
+          expiresIn = config.JWT_ACTION_FORGOT_PASSWORD_EXPIRES_IN;
+          break;
+        case ActionTokenTypeEnum.VERIFY:
+          secret = config.JWT_ACTION_VERIFY_SECRET;
+          expiresIn = config.JWT_ACTION_VERIFY_EXPIRES_IN;
+          break;
+        default:
+          throw new ApiError(
+            statusCode.UNAUTHORIZED,
+            ErrorMessages.INVALID_TOKEN_TYPE,
+          );
+      }
+      return jsonwebtoken.sign(payload, secret, { expiresIn });
+    } catch (e) {
+      throw new ApiError(statusCode.UNAUTHORIZED, ErrorMessages.INVALID_TOKEN);
+    }
+  }
+
+  public verifyActionToken(
+    actionToken: string,
+    type: ActionTokenTypeEnum,
+  ): IJwtPayload {
+    try {
+      let secret: string;
+      switch (type) {
+        case ActionTokenTypeEnum.FORGOT:
+          secret = config.JWT_ACTION_FORGOT_PASSWORD_SECRET;
+          break;
+        case ActionTokenTypeEnum.VERIFY:
+          secret = config.JWT_ACTION_VERIFY_SECRET;
+          break;
+        default:
+          throw new ApiError(
+            statusCode.BAD_REQUEST,
+            ErrorMessages.INVALID_TOKEN_TYPE,
+          );
+      }
+      return jsonwebtoken.verify(actionToken, secret) as IJwtPayload;
+    } catch (e) {
+      throw new ApiError(statusCode.BAD_REQUEST, ErrorMessages.INVALID_TOKEN);
     }
   }
 }

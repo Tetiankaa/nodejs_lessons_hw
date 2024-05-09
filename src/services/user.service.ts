@@ -7,7 +7,6 @@ import { IUser } from "../interfaces/user.interface";
 import { tokenRepository } from "../repositories/token.repository";
 import { userRepository } from "../repositories/user.repository";
 import { sendGridService } from "./send-grid.service";
-import { smsPrepareService } from "./sms-prepare.service";
 
 class UserService {
   public async getList(): Promise<IUser[]> {
@@ -19,10 +18,10 @@ class UserService {
   public async getMe(id: string): Promise<IUser> {
     return await this.getUserById(id);
   }
-  public async deleteById(id: string, accessToken: string): Promise<void> {
+  public async deleteMe(id: string): Promise<void> {
     const user = await this.getUserById(id);
-    await tokenRepository.deleteOne({ accessToken });
-    await userRepository.deleteById(id);
+    await tokenRepository.deleteOne({ _userId: id });
+    await userRepository.updateById(id, { isDeleted: true });
     await sendGridService.sendByEmailType(
       user.email,
       EEmailType.DELETE_ACCOUNT,
@@ -31,7 +30,7 @@ class UserService {
         actionToken: "actionToken",
       },
     );
-    await smsPrepareService.deleteAccount(user.phone, { name: user.name });
+    // await smsPrepareService.deleteAccount(user.phone, { name: user.name });
     return;
   }
   public async updateMe(id: string, dto: Partial<IUser>): Promise<IUser> {

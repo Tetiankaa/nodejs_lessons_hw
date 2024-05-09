@@ -4,7 +4,7 @@ export const emailTemplateConstants = {
   [EEmailType.WELCOME]: {
     templateId: "d-8aa646a131d94f68bd8e6d5250725564",
   },
-  [EEmailType.RESET_PASSWORD]: {
+  [EEmailType.FORGOT_PASSWORD]: {
     templateId: "d-1f11723ac6df45ef80633478867574a9",
   },
   [EEmailType.DELETE_ACCOUNT]: {
