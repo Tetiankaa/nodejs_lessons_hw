@@ -10,4 +10,7 @@ export const emailTemplateConstants = {
   [EEmailType.DELETE_ACCOUNT]: {
     templateId: "d-43e35d4704134fbf9fa9ce03e75b80cc",
   },
+  [EEmailType.INACTIVE_USER]: {
+    templateId: "d-8be2edd77ec7457ebef0841fe50e8385"
+  }
 };

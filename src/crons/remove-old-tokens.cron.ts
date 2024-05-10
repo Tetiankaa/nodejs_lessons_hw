@@ -6,7 +6,7 @@ import { tokenRepository } from "../repositories/token.repository";
 const handler = async () => {
   try {
     await tokenRepository.deleteManyByParams({
-      createdAt: { $lte: TimeHelper.substractByParams(3, "days") },
+      createdAt: { $lte: TimeHelper.substractByParams(10, "days") },
     });
   } catch (e) {
     console.error("removeOldTokens: ", e);

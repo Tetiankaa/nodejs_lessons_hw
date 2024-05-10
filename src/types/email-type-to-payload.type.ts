@@ -15,4 +15,5 @@ export type EmailTypeToPayloadType = {
     EmailCombinedPayloadType,
     "frontUrl" | "name" | "actionToken" | "email"
   >;
+  [EEmailType.INACTIVE_USER]: PickRequiredType<EmailCombinedPayloadType, "name">
 };

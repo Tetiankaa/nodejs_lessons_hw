@@ -10,4 +10,5 @@ export interface ITokenResponse extends ITokenPair {
 
 export interface ITokenDB extends ITokenPair {
   _userId: string;
+  createdAt?: Date;
 }
