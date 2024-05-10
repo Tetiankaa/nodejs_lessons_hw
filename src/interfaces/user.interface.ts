@@ -32,3 +32,7 @@ export interface IPrivateUser {
   isVerified?: boolean;
   role?: RoleEnum;
 }
+export interface IChangePassword {
+  oldPassword: string;
+  newPassword: string;
+}

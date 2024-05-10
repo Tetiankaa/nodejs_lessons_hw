@@ -6,8 +6,9 @@ import { EEmailType } from "../enums/email-type.enum";
 import { ApiError } from "../errors/api-error";
 import { IForgot, ISetForgot } from "../interfaces/action-token.interface";
 import { IAuth } from "../interfaces/auth.interface";
+import { IJwtPayload } from "../interfaces/jwt-payload.interface";
 import { ITokenPair, ITokenResponse } from "../interfaces/token.interface";
-import { IUser } from "../interfaces/user.interface";
+import { IChangePassword, IUser } from "../interfaces/user.interface";
 import { actionTokenRepository } from "../repositories/action-token.repository";
 import { tokenRepository } from "../repositories/token.repository";
 import { userRepository } from "../repositories/user.repository";
@@ -158,6 +159,28 @@ class AuthService {
     await actionTokenRepository.deleteByParams({
       tokenType: ActionTokenTypeEnum.VERIFY,
     });
+  }
+
+  public async changePassword(
+    jwtPayload: IJwtPayload,
+    dto: IChangePassword,
+  ): Promise<void> {
+    const user = await userRepository.getById(jwtPayload._id);
+    const isMatched = passwordService.comparePasswords(
+      dto.oldPassword,
+      user.password,
+    );
+    if (!isMatched) {
+      throw new ApiError(
+        statusCode.BAD_REQUEST,
+        ErrorMessages.WRONG_OLD_PASSWORD,
+      );
+    }
+    const hashedNewPassword = await passwordService.hashPassword(
+      dto.newPassword,
+    );
+    await userRepository.updateById(user._id, { password: hashedNewPassword });
+    await tokenRepository.deleteManyByParams({ _userId: user._id });
   }
   private async isEmailExist(email: string): Promise<void> {
     const user = await userRepository.findByParams({ email, isDeleted: false });

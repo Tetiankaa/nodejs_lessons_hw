@@ -5,6 +5,7 @@ import { IForgot, ISetForgot } from "../interfaces/action-token.interface";
 import { IJwtPayload } from "../interfaces/jwt-payload.interface";
 import { AuthMapper } from "../mappers/auth.mapper";
 import { authService } from "../services/auth.service";
+import {IChangePassword} from "../interfaces/user.interface";
 
 class AuthController {
   public async signUp(req: Request, res: Response, next: NextFunction) {
@@ -71,6 +72,16 @@ class AuthController {
     try {
       const { _id } = req.res.locals.actionTokenPayload as IJwtPayload;
       await authService.verify(_id);
+      res.sendStatus(statusCode.NO_CONTENT);
+    } catch (e) {
+      next(e);
+    }
+  }
+  public async changePassword(req: Request, res: Response, next: NextFunction) {
+    try {
+      const jwtPayload = req.res.locals.jwtPayload as IJwtPayload;
+      const body = req.body as IChangePassword;
+      await authService.changePassword(jwtPayload, body);
       res.sendStatus(statusCode.NO_CONTENT);
     } catch (e) {
       next(e);

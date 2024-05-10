@@ -34,5 +34,10 @@ router.put(
   authController.setForgotPassword,
 );
 router.put("/verify", authMiddleware.checkActionToken, authController.verify);
-
+router.patch(
+  "/change-password",
+  authMiddleware.checkAccessToken,
+  commonMiddleware.isBodyValid(UserValidator.changePassword),
+  authController.changePassword,
+);
 export const authRouter = router;

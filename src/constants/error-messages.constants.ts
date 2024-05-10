@@ -7,4 +7,5 @@ export const ErrorMessages = {
   USER_NOT_FOUND: "User was not found",
   NO_TOKEN_PROVIDED: "No token provided",
   INVALID_ID: "Invalid ID",
+  WRONG_OLD_PASSWORD: "Wrong  old password",
 };
