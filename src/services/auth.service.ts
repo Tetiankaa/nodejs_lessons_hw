@@ -158,6 +158,7 @@ class AuthService {
     await userRepository.updateById(user._id, { isVerified: true });
     await actionTokenRepository.deleteByParams({
       tokenType: ActionTokenTypeEnum.VERIFY,
+      _userId: user._id,
     });
   }
 
