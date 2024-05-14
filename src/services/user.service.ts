@@ -4,13 +4,13 @@ import { config } from "../configs/config";
 import { ErrorMessages } from "../constants/error-messages.constants";
 import { statusCode } from "../constants/status-code.constants";
 import { EEmailType } from "../enums/email-type.enum";
+import { EFileItemType } from "../enums/file-item-type.enum";
 import { ApiError } from "../errors/api-error";
 import { IUser } from "../interfaces/user.interface";
 import { tokenRepository } from "../repositories/token.repository";
 import { userRepository } from "../repositories/user.repository";
 import { s3Service } from "./s3.service";
 import { sendGridService } from "./send-grid.service";
-import { EFileItemType } from "../enums/file-item-type.enum";
 
 class UserService {
   public async getList(): Promise<IUser[]> {
@@ -46,12 +46,21 @@ class UserService {
     avatar: UploadedFile,
   ): Promise<IUser> {
     const user = await this.getUserById(userId);
+    if (user.avatar) {
+      await s3Service.deleteFile(user.avatar);
+    }
     const filePath = await s3Service.uploadFile(
       avatar,
       EFileItemType.USER,
       user._id,
     );
     return await userRepository.updateById(user._id, { avatar: filePath });
+  }
+
+  public async deleteAvatar(userId: string): Promise<void> {
+    const user = await this.getUserById(userId);
+    await s3Service.deleteFile(user.avatar);
+    await userRepository.updateById(user._id, { avatar: null });
   }
   private async getUserById(id: string): Promise<IUser> {
     const user = await userRepository.getById(id);

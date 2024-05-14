@@ -46,14 +46,14 @@ class AuthMiddleware {
     next: NextFunction,
   ) {
     try {
-      const token = req.body as ITokenPair;
-      if (!token) {
+      const { refreshToken } = req.body as ITokenPair;
+      if (!refreshToken) {
         throw new ApiError(
           statusCode.UNAUTHORIZED,
           ErrorMessages.NO_TOKEN_PROVIDED,
         );
       }
-      tokenService.verifyToken(token.refreshToken, ETokenType.REFRESH);
+      tokenService.verifyToken(refreshToken, ETokenType.REFRESH);
 
       next();
     } catch (e) {
