@@ -1,6 +1,7 @@
+import { FilterQuery, UpdateQuery } from "mongoose";
+
 import { IUser } from "../interfaces/user.interface";
 import { User } from "../models/user.models";
-import {FilterQuery} from "mongoose";
 
 class UserRepository {
   public async getAll(): Promise<IUser[]> {
@@ -18,7 +19,10 @@ class UserRepository {
   public async deleteById(id: string): Promise<void> {
     await User.deleteOne({ _id: id });
   }
-  public async updateById(id: string, user: Partial<IUser>): Promise<IUser> {
+  public async updateById(
+    id: string,
+    user: UpdateQuery<IUser>,
+  ): Promise<IUser> {
     return await User.findByIdAndUpdate({ _id: id }, user, {
       returnDocument: "after",
     });

@@ -1,4 +1,5 @@
 import { IPrivateUser, IPublicUser, IUser } from "../interfaces/user.interface";
+import {config} from "../configs/config";
 
 export class UserMapper {
   public static toPublicResponse(user: IUser): IPublicUser {
@@ -10,6 +11,7 @@ export class UserMapper {
       isVerified: user.isVerified,
       name: user.name,
       role: user.role,
+      avatar: user.avatar ? `${config.AWS_S3_ENDPOINT}/${user.avatar}` : null,
     };
   }
 
@@ -27,6 +29,7 @@ export class UserMapper {
       name: user.name,
       role: user.role,
       phone: user.phone,
+      avatar: user.avatar ? `${config.AWS_S3_ENDPOINT}/${user.avatar}` : null,
     };
   }
 }

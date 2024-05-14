@@ -8,4 +8,8 @@ export const ErrorMessages = {
   NO_TOKEN_PROVIDED: "No token provided",
   INVALID_ID: "Invalid ID",
   WRONG_OLD_PASSWORD: "Wrong  old password",
+  UPLOAD_SINGLE_FILE: "Only single file is accepted for downloading",
+  AVATAR_NOT_PROVIDED: "Avatar is not provided",
+  INVALID_FILE_FORMAT: "Invalid file format",
+  FILE_TOO_LARGE: "File is too large",
 };

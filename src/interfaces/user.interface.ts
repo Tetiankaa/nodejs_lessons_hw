@@ -10,6 +10,7 @@ export interface IUser {
   isDeleted?: boolean;
   isVerified?: boolean;
   role?: RoleEnum;
+  avatar: string;
 }
 
 export interface IPublicUser {
@@ -20,6 +21,7 @@ export interface IPublicUser {
   isDeleted?: boolean;
   isVerified?: boolean;
   role?: RoleEnum;
+  avatar: string;
 }
 
 export interface IPrivateUser {
@@ -31,6 +33,7 @@ export interface IPrivateUser {
   isDeleted?: boolean;
   isVerified?: boolean;
   role?: RoleEnum;
+  avatar: string;
 }
 export interface IChangePassword {
   oldPassword: string;

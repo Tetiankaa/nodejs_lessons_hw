@@ -1,3 +1,5 @@
+import { UploadedFile } from "express-fileupload";
+
 import { config } from "../configs/config";
 import { ErrorMessages } from "../constants/error-messages.constants";
 import { statusCode } from "../constants/status-code.constants";
@@ -6,7 +8,9 @@ import { ApiError } from "../errors/api-error";
 import { IUser } from "../interfaces/user.interface";
 import { tokenRepository } from "../repositories/token.repository";
 import { userRepository } from "../repositories/user.repository";
+import { s3Service } from "./s3.service";
 import { sendGridService } from "./send-grid.service";
+import { EFileItemType } from "../enums/file-item-type.enum";
 
 class UserService {
   public async getList(): Promise<IUser[]> {
@@ -35,24 +39,24 @@ class UserService {
   }
   public async updateMe(id: string, dto: Partial<IUser>): Promise<IUser> {
     await this.getUserById(id);
-    await this.getUserByEmail(dto.email);
     return await userRepository.updateById(id, dto);
+  }
+  public async uploadAvatar(
+    userId: string,
+    avatar: UploadedFile,
+  ): Promise<IUser> {
+    const user = await this.getUserById(userId);
+    const filePath = await s3Service.uploadFile(
+      avatar,
+      EFileItemType.USER,
+      user._id,
+    );
+    return await userRepository.updateById(user._id, { avatar: filePath });
   }
   private async getUserById(id: string): Promise<IUser> {
     const user = await userRepository.getById(id);
     if (!user) {
       throw new ApiError(statusCode.NOT_FOUND, ErrorMessages.USER_NOT_FOUND);
-    }
-    return user;
-  }
-
-  private async getUserByEmail(email: string): Promise<IUser> {
-    const user = await userRepository.findByEmail(email);
-    if (user) {
-      throw new ApiError(
-        statusCode.BAD_REQUEST,
-        ErrorMessages.EMAIL_ALREADY_EXISTS,
-      );
     }
     return user;
   }
