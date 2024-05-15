@@ -59,6 +59,12 @@ class UserService {
 
   public async deleteAvatar(userId: string): Promise<void> {
     const user = await this.getUserById(userId);
+    if (!user.avatar) {
+      throw new ApiError(
+        statusCode.BAD_REQUEST,
+        ErrorMessages.AVATAR_NOT_PROVIDED,
+      );
+    }
     await s3Service.deleteFile(user.avatar);
     await userRepository.updateById(user._id, { avatar: null });
   }
