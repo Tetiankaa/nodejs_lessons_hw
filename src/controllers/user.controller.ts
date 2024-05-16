@@ -3,14 +3,16 @@ import { UploadedFile } from "express-fileupload";
 
 import { statusCode } from "../constants/status-code.constants";
 import { IJwtPayload } from "../interfaces/jwt-payload.interface";
+import { IUserQuery } from "../interfaces/user.interface";
 import { UserMapper } from "../mappers/user.mapper";
 import { userService } from "../services/user.service";
 
 class UserController {
   public async getList(req: Request, res: Response, next: NextFunction) {
     try {
-      const users = await userService.getList();
-      const usersResponse = UserMapper.toPublicResponseList(users);
+      const query = req.query as IUserQuery;
+      const response = await userService.getList(query);
+      const usersResponse = UserMapper.toPublicResponseList(response);
       res.json(usersResponse);
     } catch (e) {
       next(e);

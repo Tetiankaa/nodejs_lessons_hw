@@ -1,5 +1,10 @@
-import { IPrivateUser, IPublicUser, IUser } from "../interfaces/user.interface";
-import {config} from "../configs/config";
+import { config } from "../configs/config";
+import {
+  IPrivateUser,
+  IPublicUser,
+  IPublicUserListResponse,
+  IUser,
+} from "../interfaces/user.interface";
 
 export class UserMapper {
   public static toPublicResponse(user: IUser): IPublicUser {
@@ -15,8 +20,18 @@ export class UserMapper {
     };
   }
 
-  public static toPublicResponseList(users: IUser[]): IPublicUser[] {
-    return users.map(this.toPublicResponse);
+  public static toPublicResponseList(
+    response: IPublicUserListResponse,
+  ): IPublicUserListResponse {
+    return {
+      data: response.data.map(this.toPublicResponse),
+      page: response.page,
+      limit: response.limit,
+      search: response.search,
+      total: response.total,
+      orderBy: response.orderBy,
+      order: response.order,
+    };
   }
 
   public static toPrivateResponse(user: IUser): IPrivateUser {

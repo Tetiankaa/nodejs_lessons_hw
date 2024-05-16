@@ -12,4 +12,5 @@ export const ErrorMessages = {
   AVATAR_NOT_PROVIDED: "Avatar is not provided",
   INVALID_FILE_FORMAT: "Invalid file format",
   FILE_TOO_LARGE: "File is too large",
+  INVALID_ORDER_BY: "Invalid orderBy",
 };

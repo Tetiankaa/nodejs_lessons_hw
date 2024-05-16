@@ -4,17 +4,21 @@ import { config } from "../configs/config";
 import { ErrorMessages } from "../constants/error-messages.constants";
 import { statusCode } from "../constants/status-code.constants";
 import { EEmailType } from "../enums/email-type.enum";
+import { EFileItemType } from "../enums/file-item-type.enum";
 import { ApiError } from "../errors/api-error";
-import { IUser } from "../interfaces/user.interface";
+import {
+  IPublicUserListResponse,
+  IUser,
+  IUserQuery,
+} from "../interfaces/user.interface";
 import { tokenRepository } from "../repositories/token.repository";
 import { userRepository } from "../repositories/user.repository";
 import { s3Service } from "./s3.service";
 import { sendGridService } from "./send-grid.service";
-import { EFileItemType } from "../enums/file-item-type.enum";
 
 class UserService {
-  public async getList(): Promise<IUser[]> {
-    return await userRepository.getAll();
+  public async getList(query: IUserQuery): Promise<IPublicUserListResponse> {
+    return await userRepository.getAll(query);
   }
   public async getById(id: string): Promise<IUser> {
     return await this.getUserById(id);

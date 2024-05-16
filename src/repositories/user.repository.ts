@@ -1,11 +1,59 @@
-import { FilterQuery, UpdateQuery } from "mongoose";
+import { FilterQuery, SortOrder, UpdateQuery } from "mongoose";
 
-import { IUser } from "../interfaces/user.interface";
+import { statusCode } from "../constants/status-code.constants";
+import { EOrder } from "../enums/order.enum";
+import { EUserListOrderBy } from "../enums/UserListOrderEnum";
+import { ApiError } from "../errors/api-error";
+import {
+  IPublicUserListResponse,
+  IUser,
+  IUserQuery,
+} from "../interfaces/user.interface";
 import { User } from "../models/user.models";
 
 class UserRepository {
-  public async getAll(): Promise<IUser[]> {
-    return await User.find({ isDeleted: false });
+  public async getAll(query: IUserQuery): Promise<IPublicUserListResponse> {
+    const {
+      page = 1,
+      limit = 3,
+      search,
+      order = EOrder.ASC,
+      orderBy = EUserListOrderBy.NAME,
+    } = query;
+    const filterObj: FilterQuery<IUser> = { isDeleted: false };
+    const sortObj: { [key: string]: SortOrder } = {};
+
+    if (orderBy) {
+      switch (orderBy) {
+        case EUserListOrderBy.NAME:
+          sortObj.name = order;
+          break;
+        case EUserListOrderBy.AGE:
+          sortObj.age = order;
+          break;
+        default:
+          throw new ApiError(statusCode.BAD_REQUEST, " Invalid orderBy");
+      }
+    }
+    if (search) {
+      filterObj.name = { $regex: search, $options: "i" };
+    }
+
+    const skip = (+page - 1) * +limit;
+    const data = await User.find(filterObj)
+      .sort(sortObj)
+      .limit(+limit)
+      .skip(skip);
+    const total = await User.countDocuments(filterObj);
+    return {
+      data,
+      total,
+      search,
+      limit,
+      page,
+      order,
+      orderBy,
+    };
   }
 
   public async getById(id: string): Promise<IUser> {

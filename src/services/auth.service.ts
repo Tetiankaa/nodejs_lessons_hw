@@ -44,11 +44,11 @@ class AuthService {
       _userId: newUser._id,
       tokenType: ActionTokenTypeEnum.VERIFY,
     });
-    await sendGridService.sendByEmailType(dto.email, EEmailType.WELCOME, {
-      name: dto.name,
-      frontUrl: config.FRONT_URL,
-      actionToken,
-    });
+    // await sendGridService.sendByEmailType(dto.email, EEmailType.WELCOME, {
+    //   name: dto.name,
+    //   frontUrl: config.FRONT_URL,
+    //   actionToken,
+    // });
     // await smsPrepareService.register(dto.phone, { name: dto.name });
     return {
       tokens,

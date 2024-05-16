@@ -1,4 +1,6 @@
 import { RoleEnum } from "../enums/role.enum";
+import {EOrder} from "../enums/order.enum";
+import {EUserListOrderBy} from "../enums/UserListOrderEnum";
 
 export interface IUser {
   _id: string;
@@ -38,4 +40,21 @@ export interface IPrivateUser {
 export interface IChangePassword {
   oldPassword: string;
   newPassword: string;
+}
+export interface IUserQuery {
+  page?: string;
+  limit?: string;
+  search?: string;
+  order?: EOrder;
+  orderBy?: EUserListOrderBy;
+  [key: string]: string | number;
+}
+export interface IPublicUserListResponse {
+  data: IPublicUser[];
+  total: number;
+  page: string | number;
+  limit: string | number;
+  search: string;
+  order: EOrder;
+  orderBy: EUserListOrderBy;
 }
